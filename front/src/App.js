@@ -1,54 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import './App.css';
 import logo from './assets/images/WolfBotz.png';
-const App = () => {
-  // Estado que armazena a saída de execução do código
-  const [executionOutput, setExecutionOutput] = useState("");
+import Seguidor from './seguidor'; 
 
-  // Função que simula a execução do código do loop
-  const executeLoopCode = (command) => {
-    // Simulação de execução do comando
-    if (command === "mover") {
-      return "O robô está se movendo.";
-    } else if (command === "parar") {
-      return "O robô parou.";
-    } else if (command === "girar") {
-      return "O robô está girando.";
-    } else if (command === "atacar") {
-      return "O robô está atacando.";
-    } else {
-      return "Comando não reconhecido!";
-    }
-  };
+const Home = () => {
+  const navigate = useNavigate();
 
-  // Função chamada quando um botão é clicado
+
   const handleCommand = (command) => {
-    const output = executeLoopCode(command);
-    setExecutionOutput(output);
+    fetch(`http://localhost:3001/estrategia/${command}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      mode: "no-cors"
+    });
   };
 
   return (
     <div className="home">
-      <div classNames= "header">
-        <img src ={logo} className="logo"></img>
+      <div className="header">
+        <img src={logo} className="logo" alt="Logo" />
         <h1 className="Titulo">WolfBotz</h1>
       </div>
 
-
-      {/* Botões de comando */}
-      <div>
-        <button onClick={() => handleCommand("mover")}>Mover</button>
-        <button onClick={() => handleCommand("parar")}>Parar</button>
-        <button onClick={() => handleCommand("girar")}>Girar</button>
-        <button onClick={() => handleCommand("atacar")}>Atacar</button>
+      <div className="comandos">
+        <button onClick={() => handleCommand("Frente")}>Frente</button>
+        <button onClick={() => handleCommand("Trás")}>Trás</button>
+        <button onClick={() => handleCommand("Esquerda")}>Esquerda</button>
+        <button onClick={() => handleCommand("Direita")}>Direita</button>
       </div>
 
-      {/* Exibição da saída do comando */}
-      <div>
-        <h2>Saída do Comando:</h2>
-        <p>{executionOutput}</p>
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => navigate('/Seguidor')}>Seguidor</button>
       </div>
     </div>
+  );
+};
+
+// Componente principal com rotas
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Seguidor" element={<Seguidor />} />
+      </Routes>
+    </Router>
   );
 };
 
